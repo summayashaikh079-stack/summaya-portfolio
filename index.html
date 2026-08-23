@@ -275,6 +275,9 @@
   .contact-item .ico{ width:34px; height:34px; border-radius:7px; background:var(--paper-2); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
   .contact-item .label{ font-family:'JetBrains Mono', monospace; font-size:0.68rem; color:var(--ink-soft); text-transform:uppercase; }
   .contact-item .val{ font-weight:600; font-size:0.95rem; word-break:break-word; }
+  .hp-field{ position:absolute; left:-9999px; top:-9999px; }
+  #formStatus.ok{ color:#2e7d32; font-weight:600; }
+  #formStatus.err{ color:#c62828; font-weight:600; }
 
   form{ display:flex; flex-direction:column; gap:14px; }
   form input, form textarea{
@@ -586,15 +589,17 @@
         <a href="https://github.com/summayashaikh079-stack" target="_blank" class="contact-item"><div class="ico">🐙</div><div><div class="label mono">GitHub</div><div class="val">github.com/summayashaikh079-stack</div></div></a>
         <div class="contact-item"><div class="ico">🎓</div><div><div class="label mono">University</div><div class="val">SALU Khairpur · BSCS</div></div></div>
       </div>
-      <form id="contactForm">
+      <form id="contactForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="contact">
+        <p class="hp-field"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
         <label class="mono">Your Name</label>
-        <input type="text" id="cName" placeholder="Your full name" required>
+        <input type="text" id="cName" name="name" placeholder="Your full name" required>
         <label class="mono">Email Address</label>
-        <input type="email" id="cEmail" placeholder="you@example.com" required>
+        <input type="email" id="cEmail" name="email" placeholder="you@example.com" required>
         <label class="mono">Message</label>
-        <textarea id="cMsg" placeholder="What would you like to discuss?" required></textarea>
+        <textarea id="cMsg" name="message" placeholder="What would you like to discuss?" required></textarea>
         <button type="submit" class="btn btn-primary">Send Message →</button>
-        <small>Opens your email app addressed to summayashaikh079@gmail.com.</small>
+        <small id="formStatus">Sends straight to my inbox — no email app needed.</small>
       </form>
     </div>
   </section>
@@ -622,15 +627,37 @@
     });
   });
 
-  // Contact form -> mailto
-  document.getElementById('contactForm').addEventListener('submit', function(e){
+  // Contact form -> Netlify Forms (real backend, no page reload)
+  function encodeFormData(data) {
+    return Object.keys(data).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(data[key])).join('&');
+  }
+
+  const contactForm = document.getElementById('contactForm');
+  const formStatus = document.getElementById('formStatus');
+
+  contactForm.addEventListener('submit', function(e){
     e.preventDefault();
-    const name = document.getElementById('cName').value;
-    const email = document.getElementById('cEmail').value;
-    const msg = document.getElementById('cMsg').value;
-    const subject = encodeURIComponent('Portfolio inquiry from ' + name);
-    const body = encodeURIComponent(msg + '\n\nFrom: ' + name + ' (' + email + ')');
-    window.location.href = 'mailto:summayashaikh079@gmail.com?subject=' + subject + '&body=' + body;
+    const formData = new FormData(contactForm);
+    const payload = {};
+    formData.forEach((value, key) => { payload[key] = value; });
+
+    formStatus.textContent = 'Sending…';
+    formStatus.className = '';
+
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: encodeFormData(payload)
+    })
+      .then(() => {
+        formStatus.textContent = 'Sent — thank you! I\'ll reply by email soon.';
+        formStatus.className = 'ok';
+        contactForm.reset();
+      })
+      .catch(() => {
+        formStatus.textContent = 'Something went wrong — please email me directly instead.';
+        formStatus.className = 'err';
+      });
   });
 </script>
 

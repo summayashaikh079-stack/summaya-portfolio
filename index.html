@@ -140,6 +140,13 @@
     padding:2px 7px; border-radius:2px 2px 2px 0;
     white-space:nowrap;
   }
+  .conf-label-standalone{
+    position:static; display:inline-block;
+    background:var(--box-blue); color:#fff;
+    font-family:'JetBrains Mono', monospace; font-size:0.65rem;
+    padding:3px 8px; border-radius:2px 2px 0 0;
+    white-space:nowrap; margin-left:2px;
+  }
 
   /* ---------- hero ---------- */
   .hero{ padding-top:72px; }
@@ -248,8 +255,8 @@
   /* ---------- research banner ---------- */
   .fyp-banner{
     background:var(--ink); color:var(--paper);
-    border-radius:14px; padding:40px 36px 36px;
-    position:relative; overflow:visible; margin-top:14px;
+    border-radius:0 14px 14px 14px; padding:40px 36px 36px;
+    position:relative; overflow:visible;
   }
   .fyp-banner .tag{ background:rgba(255,255,255,0.1); color:#9DB2FF; border-color:rgba(157,178,255,0.4); }
   .fyp-banner h3{ font-family:'Space Grotesk', sans-serif; font-size:1.7rem; margin:16px 0 12px; max-width:600px; }
@@ -457,8 +464,8 @@
 
   <!-- FYP BANNER -->
   <section id="fyp">
+    <span class="conf-label conf-label-standalone mono">final_year_project: 0.10</span>
     <div class="fyp-banner bbox">
-      <span class="conf-label mono">final_year_project: 0.10</span>
       <span class="tag">Computer Vision · Real-Time Systems</span>
       <h3>Intelligent Real-Time Classroom Monitoring System</h3>
       <p>Topic and team finalized — work starting soon. The planned system will use YOLOv8 for real-time student detection, ArcFace for facial recognition, and MediaPipe for pose and engagement analysis.</p>
